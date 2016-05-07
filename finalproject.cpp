@@ -25,18 +25,51 @@ GLfloat t = 0.0f;
 // Flag for pausing
 bool paws = true;
 
+/* Board boundaries */
+int BOARD_LEFT = -10;
+int BOARD_RIGHT = 10;
+int BOARD_TOP = 10;
+int BOARD_BOTTOM = -10;
+int Z_HEIGHT = -5;
 
+/* Paddle positions */
+int PADDLE_WIDTH = 5;
+int PADDLE_HEIGHT = 1;
+int PADDLE_DEPTH = 1;
+// Player
+float playerPaddle = 0;
+// Computer
+float computerPaddle = 0;
+
+/* Cat position */
+float catX = 0;
+float catY = 0;
+
+/* Timer */
 chrono::duration<long,ratio<1,10>> DELTA_T(1);
 auto start = std::chrono::high_resolution_clock::now();
 
-float random(float min, float max)
-{
-    float random = ((float) rand()) / (float) RAND_MAX;
-    float range = max - min;  
-    return random * range + min;
+void drawPaddle(float x, float y) {
+	glPushMatrix();
+	glTranslatef(x, y, Z_HEIGHT);
+	glScalef(PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_DEPTH);
+	glutSolidCube(1);
+	glPopMatrix();
 }
 
+void drawCat(float x, float y) {
+	glPushMatrix();
+	glTranslatef(x, y, Z_HEIGHT);
+	glutSolidSphere(1, 15, 15);
+	glPopMatrix();
+}
 
+void drawGame() {
+	glColor3f(1.0, 1.0, 1.0);
+	drawPaddle(playerPaddle, BOARD_BOTTOM);
+	drawPaddle(computerPaddle, BOARD_TOP);
+	drawCat(catX, catY);
+}
 
 /* Initialize OpenGL Graphics */
 void init() {
@@ -54,6 +87,9 @@ void init() {
 	glDepthFunc(GL_LEQUAL);
 	// Provide smooth shading
 	glShadeModel(GL_SMOOTH);
+
+	// Draw game board
+	drawGame();
 }
 
 void transform(void)
@@ -81,6 +117,8 @@ void displayfcn() {
 	// This is similar to glPopMatrix()
 	glLoadIdentity();
 
+	// Draw game board
+	drawGame();
 
 	// Double buffering
 	glutSwapBuffers();
@@ -129,7 +167,11 @@ void winReshapeFcn(GLsizei width, GLsizei height) {
 	glLoadIdentity();
 	// Enable perspective projection with fovy, aspect, zNear and zFar
 	// This is the camera view and objects align with view frustum
-	gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+	gluPerspective(60.0f, aspect, 0.1f, 100.0f);
+	// Move camera to position above gameboard on player side
+	gluLookAt(0, -15, 5,
+		  0, -9, 0,
+                  0, 1, 5);
 }
 
 /* Main function: GLUT runs as a console application starting at main() */
