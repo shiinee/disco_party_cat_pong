@@ -20,7 +20,7 @@ char title[] = "DISCO PARTY CAT PONG";
 // Window display size
 GLsizei winWidth = 800, winHeight = 600;
 // Time delta for animation
-GLfloat da = 10.0f;
+GLfloat da = 5.0f;
 GLfloat dt = 0.1f;
 
 // Flag for pausing
