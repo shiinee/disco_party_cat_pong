@@ -75,6 +75,19 @@ void drawPaddle(float x, float y) {
 void drawCat(float x, float y) {
 	glPushMatrix();
 	glTranslatef(x, y, Z_HEIGHT);
+
+	glPushMatrix();
+	glTranslatef(0.6, 0.55, 0);
+	glRotatef(45.0, 0, 1, 0);
+	glutSolidCone(0.5, 0.9, 15, 15);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.6, 0.55, 0);
+	glRotatef(-45.0, 0, 1, 0);
+	glutSolidCone(0.5, 0.9, 15, 15);
+	glPopMatrix();
+
 	glutSolidSphere(1, 15, 15);
 	glPopMatrix();
 }
