@@ -20,6 +20,7 @@ char title[] = "DISCO PARTY CAT PONG";
 // Window display size
 GLsizei winWidth = 800, winHeight = 600;
 // Time delta for animation
+GLfloat da = 1.0f;
 GLfloat dt = 0.1f;
 
 // Flag for pausing
@@ -31,6 +32,7 @@ int BOARD_RIGHT = 10;
 int BOARD_TOP = 10;
 int BOARD_BOTTOM = -10;
 int Z_HEIGHT = -5;
+float BOARD_DEPTH = 0.1;
 
 /* Paddle positions */
 int PADDLE_WIDTH = 5;
@@ -57,6 +59,38 @@ int computerScore = 0;
 /* Timer */
 chrono::duration<long,ratio<1,10>> DELTA_T(1);
 auto start = std::chrono::high_resolution_clock::now();
+
+/* Lighting */
+class Light {
+public:
+	GLint id;
+	GLfloat diffuse[4];
+	GLfloat position[4];
+
+	Light(int, float, float, float, float, float, float);
+};
+
+Light::Light(int _id, float x, float y, float z, float r, float g, float b) {
+	id = _id;
+
+	position[0] = x;
+	position[1] = y;
+	position[2] = z;
+	position[3] = 1.0;
+
+	diffuse[0] = r;
+	diffuse[1] = g;
+	diffuse[2] = b;
+	diffuse[3] = 1.0;
+}
+
+vector<Light> lights;
+vector<Light>::const_iterator l;
+
+// Variables for light animation
+GLfloat spin = 0.0f;
+GLfloat rotation = 0.0f;
+GLfloat LIGHT_RADIUS = 1.0;
 
 float random(float min, float max)
 {
@@ -90,6 +124,14 @@ void drawCat(float x, float y) {
 	glPopMatrix();
 
 	glutSolidSphere(1, 15, 15);
+	glPopMatrix();
+}
+
+void drawFloor() {
+	glPushMatrix();
+	glTranslatef(0.0, 0.0, Z_HEIGHT);
+	glScalef(BOARD_RIGHT-BOARD_LEFT, BOARD_TOP-BOARD_BOTTOM, BOARD_DEPTH);
+	glutSolidCube(1);
 	glPopMatrix();
 }
 
@@ -166,10 +208,11 @@ void drawText(string text, int x, int y) {
 }
 
 void drawGame() {
-	glColor3f(1.0, 1.0, 1.0);
-
+	glColor3f(0.5, 0.5, 0.5);
+	drawFloor();
 	drawBorders();
 
+	glColor3f(1.0, 1.0, 1.0);
 	drawPaddle(playerPaddle, BOARD_BOTTOM);
 	drawPaddle(computerPaddle, BOARD_TOP + PADDLE_HEIGHT);
 
@@ -247,6 +290,20 @@ void computerMove(float &paddlePos, float catX) {
 		paddlePos -= COMPUTER_SPEED;
 }
 
+void showLights() {
+	glPushMatrix();
+	glRotatef(0.0, spin, 0.0, 1.0);
+	glTranslatef(LIGHT_RADIUS, 0.0, 0.0);
+	glRotatef(rotation, 0.0, 0.0, 1.0);
+
+	for (l = lights.begin(); l != lights.end(); ++l) {
+		glLightfv(l->id, GL_POSITION, l->position);
+		glLightfv(l->id, GL_DIFFUSE, l->diffuse);
+	}
+
+	glPopMatrix();
+}
+
 /* Initialize OpenGL Graphics */
 void init() {
 	// Set black background
@@ -260,7 +317,23 @@ void init() {
 	// Provide smooth shading
 	glShadeModel(GL_SMOOTH);
 
-	// TODO: disco lighting!
+	// Enable lighting
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
+	// Create lights
+	lights.push_back(Light(GL_LIGHT0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	lights.push_back(Light(GL_LIGHT1, -0.5, 0.866, 0.0, 0.0, 1.0, 0.0));
+	lights.push_back(Light(GL_LIGHT2, -0.5, -0.866, 0.0, 0.0, 0.0, 1.0));
+
+	// Set specular color and shine
+        GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+        GLfloat mat_shininess[] = { 50.0 };
+        // Apply the specular color to the front.
+        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+        // Apply the shininess to the front.
+        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
 	// Draw game board
 	resetBoard();
@@ -281,6 +354,10 @@ void transform(void)
 	// Move cat
 	catX += catVx * dt;
 	catY += catVy * dt;
+
+	// Spin lights
+	spin += da;
+	rotation += da;
 
 	// Draw game
 	drawGame();
@@ -311,6 +388,9 @@ void displayfcn() {
 	// This is done each time you need to clear the matrix operations
 	// This is similar to glPopMatrix()
 	glLoadIdentity();
+
+	// Add lights
+	showLights();
 
 	// Draw game board
 	drawGame();
