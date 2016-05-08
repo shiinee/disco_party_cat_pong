@@ -36,7 +36,7 @@ int Z_HEIGHT = -5;
 int PADDLE_WIDTH = 5;
 int PADDLE_HEIGHT = 1;
 int PADDLE_DEPTH = 1;
-float PADDLE_MOVE = 0.1;
+float PADDLE_MOVE = 0.2;
 // Player
 float playerPaddle = 0;
 // Computer
@@ -153,6 +153,14 @@ void checkGoal(float &y) {
 		playerScore++;
 		resetBoard();
 	}
+	// TODO: freeze screen briefly and indicate point scored before resetting
+}
+
+void computerMove(float &paddlePos, float catX) {
+	if (paddlePos + PADDLE_MOVE < catX)
+		paddlePos += PADDLE_MOVE;
+	else if (paddlePos - PADDLE_MOVE > catX)
+		paddlePos -= PADDLE_MOVE;
 }
 
 /* Initialize OpenGL Graphics */
@@ -184,6 +192,9 @@ void transform(void)
 		return;
 
 	start = now;
+
+	// Move computer paddle
+	computerMove(computerPaddle, catX);
 
 	// Draw paddles
 	drawPaddle(playerPaddle, BOARD_BOTTOM);
