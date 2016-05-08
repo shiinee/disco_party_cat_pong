@@ -112,6 +112,7 @@ void drawGame() {
 }
 
 void resetBoard() {
+	// Reset cat to center
 	catX = 0;
 	catY = 0;
 
@@ -134,10 +135,12 @@ void checkHit(float minX, float maxX, float minY, float maxY, float resetY,
 }
 
 void checkBounds(float &x, float &vx) {
+	// Cat bounces off left side
 	if (x < BOARD_LEFT) {
 		x = BOARD_LEFT;
 		vx = -vx;
 	}
+	// Cat bounces off right side
 	if (x > BOARD_RIGHT) {
 		x = BOARD_RIGHT;
 		vx = -vx;
@@ -145,10 +148,12 @@ void checkBounds(float &x, float &vx) {
 }
 
 void checkGoal(float &y) {
+	// Computer scored
 	if (y < BOARD_BOTTOM) {
 		computerScore++;
 		resetBoard();
 	}
+	// Player scored
 	if (y > BOARD_TOP) {
 		playerScore++;
 		resetBoard();
