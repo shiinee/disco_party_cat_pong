@@ -134,9 +134,34 @@ void drawBorders() {
 	glEnd();
 }
 
+void start2D() {
+	// 2D mode for drawing scores on board
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0.0, winWidth, 0.0, winHeight);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+}
+
+void stop2D() {
+	// Exit 2D mode
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+}
+
 void drawScore(int score, int x, int y) {
 	glRasterPos2i(x, y);
 	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, score + 48);
+}
+
+void drawText(string text, int x, int y) {
+        glRasterPos2i(x, y);
+        for (int i = 0; i < text.length(); i++)
+                glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
 }
 
 void drawGame() {
@@ -149,25 +174,12 @@ void drawGame() {
 
 	drawCat(catX, catY);
 
-	// 2D mode for drawing scores on board
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluOrtho2D(0.0, winWidth, 0.0, winHeight);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
+	start2D();
 	drawScore(playerScore, 10, 10);
 	drawScore(computerScore, 10, winHeight - 20);
-
-	// TODO: also write some instructions at the top
-
-	// Exit 2D mode
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+	drawText("ready to PARTY? press space to start", winWidth/2 - 140, 30);
+	drawText("use left and right arrows to move your paddle", winWidth/2 - 175, 20);
+	stop2D();
 }
 
 void resetBoard() {
