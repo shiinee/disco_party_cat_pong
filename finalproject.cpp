@@ -185,10 +185,12 @@ void start2D() {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
+	glDisable(GL_LIGHTING);
 }
 
 void stop2D() {
 	// Exit 2D mode
+	glEnable(GL_LIGHTING);
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
@@ -330,12 +332,12 @@ void init() {
 	lights.push_back(Light(GL_LIGHT4, BOARD_RIGHT/2, 0.866*BOARD_TOP, Z_HEIGHT, 0.0, 1.0, 0.0));
 	lights.push_back(Light(GL_LIGHT5, BOARD_RIGHT/2, 0.866*BOARD_BOTTOM, Z_HEIGHT, 0.0, 0.0, 1.0));
 
-	// Set specular color and shine
+	// Set ambient light, specular color and shine
+	GLfloat mat_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
         GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
         GLfloat mat_shininess[] = { 50.0 };
-        // Apply the specular color to the front.
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-        // Apply the shininess to the front.
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
 	// Draw game board
