@@ -46,7 +46,8 @@ float computerPaddle = 0;
 float catX = 0;
 float catY = 0;
 float catVx = 0;
-float catVy = -5;
+float catVy = 0;
+float BASE_V = 5.0;
 
 /* Score */
 int playerScore = 0;
@@ -55,6 +56,13 @@ int computerScore = 0;
 /* Timer */
 chrono::duration<long,ratio<1,10>> DELTA_T(1);
 auto start = std::chrono::high_resolution_clock::now();
+
+float random(float min, float max)
+{
+    float random = ((float) rand()) / (float) RAND_MAX;
+    float range = max - min;
+    return random * range + min;
+}
 
 void drawPaddle(float x, float y) {
 	glPushMatrix();
@@ -106,8 +114,14 @@ void drawGame() {
 void resetBoard() {
 	catX = 0;
 	catY = 0;
-	catVx = 0;
-	catVy = -5;
+
+	// Randomize starting direction
+	float direction = random(M_PI/4, 3*M_PI/4);
+	if (rand() % 2)
+		direction *= -1;
+
+	catVx = BASE_V * cos(direction);
+	catVy = BASE_V * sin(direction);
 }
 
 void checkHit(float minX, float maxX, float minY, float maxY, float resetY,
@@ -159,6 +173,7 @@ void init() {
 	glShadeModel(GL_SMOOTH);
 
 	// Draw game board
+	resetBoard();
 	drawGame();
 }
 
