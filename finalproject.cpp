@@ -92,6 +92,48 @@ void drawCat(float x, float y) {
 	glPopMatrix();
 }
 
+void drawBorders() {
+	glBegin(GL_LINES);
+
+	glVertex3f(BOARD_LEFT, BOARD_BOTTOM, Z_HEIGHT);
+	glVertex3f(BOARD_RIGHT, BOARD_BOTTOM, Z_HEIGHT);
+
+	glVertex3f(BOARD_RIGHT, BOARD_BOTTOM, Z_HEIGHT);
+	glVertex3f(BOARD_RIGHT, BOARD_TOP, Z_HEIGHT);
+
+	glVertex3f(BOARD_LEFT, BOARD_TOP, Z_HEIGHT);
+	glVertex3f(BOARD_RIGHT, BOARD_TOP, Z_HEIGHT);
+
+	glVertex3f(BOARD_LEFT, BOARD_BOTTOM, Z_HEIGHT);
+	glVertex3f(BOARD_LEFT, BOARD_TOP, Z_HEIGHT);
+
+	glVertex3f(BOARD_LEFT, BOARD_BOTTOM, Z_HEIGHT + PADDLE_DEPTH);
+	glVertex3f(BOARD_RIGHT, BOARD_BOTTOM, Z_HEIGHT + PADDLE_DEPTH);
+
+	glVertex3f(BOARD_RIGHT, BOARD_BOTTOM, Z_HEIGHT + PADDLE_DEPTH);
+	glVertex3f(BOARD_RIGHT, BOARD_TOP, Z_HEIGHT + PADDLE_DEPTH);
+
+	glVertex3f(BOARD_LEFT, BOARD_TOP, Z_HEIGHT + PADDLE_DEPTH);
+	glVertex3f(BOARD_RIGHT, BOARD_TOP, Z_HEIGHT + PADDLE_DEPTH);
+
+	glVertex3f(BOARD_LEFT, BOARD_BOTTOM, Z_HEIGHT + PADDLE_DEPTH);
+	glVertex3f(BOARD_LEFT, BOARD_TOP, Z_HEIGHT + PADDLE_DEPTH);
+
+	glVertex3f(BOARD_LEFT, BOARD_BOTTOM, Z_HEIGHT);
+	glVertex3f(BOARD_LEFT, BOARD_BOTTOM, Z_HEIGHT + PADDLE_DEPTH);
+
+	glVertex3f(BOARD_LEFT, BOARD_TOP, Z_HEIGHT);
+	glVertex3f(BOARD_LEFT, BOARD_TOP, Z_HEIGHT + PADDLE_DEPTH);
+
+	glVertex3f(BOARD_RIGHT, BOARD_BOTTOM, Z_HEIGHT);
+	glVertex3f(BOARD_RIGHT, BOARD_BOTTOM, Z_HEIGHT + PADDLE_DEPTH);
+
+	glVertex3f(BOARD_RIGHT, BOARD_TOP, Z_HEIGHT);
+	glVertex3f(BOARD_RIGHT, BOARD_TOP, Z_HEIGHT + PADDLE_DEPTH);
+
+	glEnd();
+}
+
 void drawScore(int score, int x, int y) {
 	glRasterPos2i(x, y);
 	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, score + 48);
@@ -99,6 +141,8 @@ void drawScore(int score, int x, int y) {
 
 void drawGame() {
 	glColor3f(1.0, 1.0, 1.0);
+
+	drawBorders();
 
 	drawPaddle(playerPaddle, BOARD_BOTTOM);
 	drawPaddle(computerPaddle, BOARD_TOP + PADDLE_HEIGHT);
@@ -301,7 +345,7 @@ void winReshapeFcn(GLsizei width, GLsizei height) {
 	// This is the camera view and objects align with view frustum
 	gluPerspective(60.0f, aspect, 0.1f, 100.0f);
 	// Move camera to position above gameboard on player side
-	gluLookAt(0, -15, 5,
+	gluLookAt(0, -16, 8.2,
 		  0, -9, 0,
                   0, 1, 5);
 }
