@@ -293,7 +293,7 @@ void computerMove(float &paddlePos, float catX) {
 
 void showLights() {
 	glPushMatrix();
-	glRotatef(0.0, 0.0, spin, 1.0);
+	glRotatef(spin, 0.0, 0.0, 1.0);
 
 	for (l = lights.begin(); l != lights.end(); ++l) {
 		glLightfv(l->id, GL_POSITION, l->position);
