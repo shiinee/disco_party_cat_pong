@@ -36,11 +36,12 @@ int Z_HEIGHT = -5;
 int PADDLE_WIDTH = 5;
 int PADDLE_HEIGHT = 1;
 int PADDLE_DEPTH = 1;
-float PADDLE_MOVE = 0.2;
 // Player
 float playerPaddle = 0;
+float PLAYER_SPEED = 0.2;
 // Computer
 float computerPaddle = 0;
+float COMPUTER_SPEED = 0.3;
 
 /* Cat position */
 float catX = 0;
@@ -206,7 +207,7 @@ void checkHit(float minX, float maxX, float minY, float maxY, float resetY,
 		vy = -vy;
 		// If cat hit edge of paddle, impart a little extra X-velocity
 		// This is only an approximation to realistic pong physics
-		vx += 0.2 * abs(x - (minX + maxX)/2) / PADDLE_WIDTH * vx;
+		vx += 0.9 * (x - (minX + maxX)/2) / PADDLE_WIDTH * BASE_V;
 	}
 }
 
@@ -233,15 +234,17 @@ void checkGoal(float &y) {
 	else
 		return;
 
-	nanosleep((const struct timespec[]){{0, 250000000L}}, NULL);
+	nanosleep((const struct timespec[]){{0, 300000000L}}, NULL);
 	resetBoard();
 }
 
 void computerMove(float &paddlePos, float catX) {
-	if (paddlePos + PADDLE_MOVE < catX && paddlePos + PADDLE_WIDTH/2 < BOARD_RIGHT)
-		paddlePos += PADDLE_MOVE;
-	else if (paddlePos - PADDLE_MOVE > catX && paddlePos - PADDLE_WIDTH/2 > BOARD_LEFT)
-		paddlePos -= PADDLE_MOVE;
+	// The computer player is very simple minded: it always moves its paddle toward
+	// the cat at its maximum speed (without going off the board).
+	if (paddlePos + COMPUTER_SPEED < catX && paddlePos + PADDLE_WIDTH/2 < BOARD_RIGHT)
+		paddlePos += COMPUTER_SPEED;
+	else if (paddlePos - COMPUTER_SPEED > catX && paddlePos - PADDLE_WIDTH/2 > BOARD_LEFT)
+		paddlePos -= COMPUTER_SPEED;
 }
 
 /* Initialize OpenGL Graphics */
@@ -339,11 +342,11 @@ void specialKeys(int key, int x, int y)
 	switch (key) {
 	case GLUT_KEY_LEFT:
 		if (playerPaddle - PADDLE_WIDTH/2 > BOARD_LEFT)
-			playerPaddle -= PADDLE_MOVE;
+			playerPaddle -= PLAYER_SPEED;
 		break;
 	case GLUT_KEY_RIGHT:
 		if (playerPaddle + PADDLE_WIDTH/2 < BOARD_RIGHT)
-			playerPaddle += PADDLE_MOVE;
+			playerPaddle += PLAYER_SPEED;
 		break;
 	default:
 		break;
