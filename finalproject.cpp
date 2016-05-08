@@ -214,14 +214,12 @@ void transform(void)
 	// Move computer paddle
 	computerMove(computerPaddle, catX);
 
-	// Draw paddles
-	drawPaddle(playerPaddle, BOARD_BOTTOM);
-	drawPaddle(computerPaddle, BOARD_TOP);
-
-	// Move and draw cat
+	// Move cat
 	catX += catVx * dt;
 	catY += catVy * dt;
-	drawCat(catX, catY);
+
+	// Draw game
+	drawGame();
 
 	// Check collision with paddle
 	checkHit(playerPaddle - PADDLE_WIDTH/2, playerPaddle + PADDLE_WIDTH/2,
