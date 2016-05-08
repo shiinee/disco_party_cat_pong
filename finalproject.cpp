@@ -292,6 +292,7 @@ void computerMove(float &paddlePos, float catX) {
 }
 
 void showLights() {
+	// Rotate the disco lights around the center of the board
 	glPushMatrix();
 	glRotatef(spin, 0.0, 0.0, 1.0);
 
@@ -324,6 +325,7 @@ void init() {
 	glEnable(GL_LIGHT3);
 	glEnable(GL_LIGHT4);
 	glEnable(GL_LIGHT5);
+
 	// Create lights
 	lights.push_back(Light(GL_LIGHT0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0));
 	lights.push_back(Light(GL_LIGHT1, -0.5, 0.866, 0.0, 0.0, 1.0, 0.0));
@@ -362,9 +364,6 @@ void transform(void)
 
 	// Spin lights
 	spin += da;
-
-	// Draw game
-	drawGame();
 
 	// Check collision with paddle
 	checkHit(playerPaddle - PADDLE_WIDTH/2, playerPaddle + PADDLE_WIDTH/2,
