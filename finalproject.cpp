@@ -130,7 +130,7 @@ void checkHit(float minX, float maxX, float minY, float maxY, float resetY,
 	if (y > minY && y < maxY && x > minX && x < maxX) {
 		y = resetY;
 		vy = -vy;
-		// TODO: change vx
+		vx += 0.2 * abs(x - (minX + maxX)/2) / PADDLE_WIDTH * vx;
 	}
 }
 
