@@ -20,7 +20,7 @@ char title[] = "DISCO PARTY CAT PONG";
 // Window display size
 GLsizei winWidth = 800, winHeight = 600;
 // Time delta for animation
-GLfloat da = 1.0f;
+GLfloat da = 10.0f;
 GLfloat dt = 0.1f;
 
 // Flag for pausing
@@ -89,7 +89,6 @@ vector<Light>::const_iterator l;
 
 // Variables for light animation
 GLfloat spin = 0.0f;
-GLfloat rotation = 0.0f;
 GLfloat LIGHT_RADIUS = 1.0;
 
 float random(float min, float max)
@@ -292,9 +291,7 @@ void computerMove(float &paddlePos, float catX) {
 
 void showLights() {
 	glPushMatrix();
-	glRotatef(0.0, spin, 0.0, 1.0);
-	glTranslatef(LIGHT_RADIUS, 0.0, 0.0);
-	glRotatef(rotation, 0.0, 0.0, 1.0);
+	glRotatef(0.0, 0.0, spin, 1.0);
 
 	for (l = lights.begin(); l != lights.end(); ++l) {
 		glLightfv(l->id, GL_POSITION, l->position);
@@ -322,10 +319,16 @@ void init() {
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHT1);
 	glEnable(GL_LIGHT2);
+	glEnable(GL_LIGHT3);
+	glEnable(GL_LIGHT4);
+	glEnable(GL_LIGHT5);
 	// Create lights
 	lights.push_back(Light(GL_LIGHT0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0));
 	lights.push_back(Light(GL_LIGHT1, -0.5, 0.866, 0.0, 0.0, 1.0, 0.0));
 	lights.push_back(Light(GL_LIGHT2, -0.5, -0.866, 0.0, 0.0, 0.0, 1.0));
+	lights.push_back(Light(GL_LIGHT3, BOARD_LEFT, 0.0, Z_HEIGHT, 1.0, 0.0, 0.0));
+	lights.push_back(Light(GL_LIGHT4, BOARD_RIGHT/2, 0.866*BOARD_TOP, Z_HEIGHT, 0.0, 1.0, 0.0));
+	lights.push_back(Light(GL_LIGHT5, BOARD_RIGHT/2, 0.866*BOARD_BOTTOM, Z_HEIGHT, 0.0, 0.0, 1.0));
 
 	// Set specular color and shine
         GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -357,7 +360,6 @@ void transform(void)
 
 	// Spin lights
 	spin += da;
-	rotation += da;
 
 	// Draw game
 	drawGame();
