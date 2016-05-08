@@ -101,7 +101,7 @@ void drawGame() {
 	glColor3f(1.0, 1.0, 1.0);
 
 	drawPaddle(playerPaddle, BOARD_BOTTOM);
-	drawPaddle(computerPaddle, BOARD_TOP);
+	drawPaddle(computerPaddle, BOARD_TOP + PADDLE_HEIGHT);
 
 	drawCat(catX, catY);
 
