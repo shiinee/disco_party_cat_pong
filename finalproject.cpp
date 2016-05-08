@@ -226,9 +226,9 @@ void checkGoal(float &y) {
 }
 
 void computerMove(float &paddlePos, float catX) {
-	if (paddlePos + PADDLE_MOVE < catX)
+	if (paddlePos + PADDLE_MOVE < catX && paddlePos + PADDLE_WIDTH/2 < BOARD_RIGHT)
 		paddlePos += PADDLE_MOVE;
-	else if (paddlePos - PADDLE_MOVE > catX)
+	else if (paddlePos - PADDLE_MOVE > catX && paddlePos - PADDLE_WIDTH/2 > BOARD_LEFT)
 		paddlePos -= PADDLE_MOVE;
 }
 
@@ -326,10 +326,12 @@ void specialKeys(int key, int x, int y)
 
 	switch (key) {
 	case GLUT_KEY_LEFT:
-		playerPaddle -= PADDLE_MOVE;
+		if (playerPaddle - PADDLE_WIDTH/2 > BOARD_LEFT)
+			playerPaddle -= PADDLE_MOVE;
 		break;
 	case GLUT_KEY_RIGHT:
-		playerPaddle += PADDLE_MOVE;
+		if (playerPaddle + PADDLE_WIDTH/2 < BOARD_RIGHT)
+			playerPaddle += PADDLE_MOVE;
 		break;
 	default:
 		break;
