@@ -183,11 +183,7 @@ void computerMove(float &paddlePos, float catX) {
 
 /* Initialize OpenGL Graphics */
 void init() {
-	// Get and display your OpenGL version
-	const GLubyte *Vstr;
-	Vstr = glGetString(GL_VERSION);
-	fprintf(stderr, "Your OpenGL version is %s\n", Vstr);
-
+	// Set black background
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	// Maximize depth display
 	glClearDepth(1.0f);
