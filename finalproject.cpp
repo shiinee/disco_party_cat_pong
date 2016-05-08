@@ -36,6 +36,7 @@ int Z_HEIGHT = -5;
 int PADDLE_WIDTH = 5;
 int PADDLE_HEIGHT = 1;
 int PADDLE_DEPTH = 1;
+float PADDLE_MOVE = 0.1;
 // Player
 float playerPaddle = 0;
 // Computer
@@ -44,6 +45,12 @@ float computerPaddle = 0;
 /* Cat position */
 float catX = 0;
 float catY = 0;
+float catVx = 0;
+float catVy = -1;
+
+/* Score */
+int playerScore = 0;
+int computerScore = 0;
 
 /* Timer */
 chrono::duration<long,ratio<1,10>> DELTA_T(1);
@@ -69,6 +76,35 @@ void drawGame() {
 	drawPaddle(playerPaddle, BOARD_BOTTOM);
 	drawPaddle(computerPaddle, BOARD_TOP);
 	drawCat(catX, catY);
+}
+
+void resetBoard() {
+	catX = 0;
+	catY = 0;
+	catVx = 0;
+	catVy = -1;
+}
+
+void checkBounds(float &x, float &vx) {
+	if (x < BOARD_LEFT) {
+		x = BOARD_LEFT;
+		vx = -vx;
+	}
+	if (x > BOARD_RIGHT) {
+		x = BOARD_RIGHT;
+		vx = -vx;
+	}
+}
+
+void checkGoal(float &y) {
+	if (y < BOARD_BOTTOM) {
+		computerScore++;
+		resetBoard();
+	}
+	if (y > BOARD_TOP) {
+		playerScore++;
+		resetBoard();
+	}
 }
 
 /* Initialize OpenGL Graphics */
@@ -101,6 +137,20 @@ void transform(void)
 	start = now;
 	t += 0.1;
 
+	// Draw paddles
+	drawPaddle(playerPaddle, BOARD_BOTTOM);
+	drawPaddle(computerPaddle, BOARD_TOP);
+
+	// Move and draw cat
+	catX += catVx * t;
+	catY += catVy * t;
+	drawCat(catX, catY);
+
+	// Check collision with paddle
+
+	// Check bounds
+	checkBounds(catX, catVx);
+	checkGoal(catY);
 
 	glutPostRedisplay();
 }
@@ -139,12 +189,17 @@ void keyboard(unsigned char key, int x, int y)
         }
 }
 
-void specialKeys(unsigned char key, int x, int y)
+void specialKeys(int key, int x, int y)
 {
+	if (paws)
+		return;
+
 	switch (key) {
 	case GLUT_KEY_LEFT:
+		playerPaddle -= PADDLE_MOVE;
 		break;
 	case GLUT_KEY_RIGHT:
+		playerPaddle += PADDLE_MOVE;
 		break;
 	default:
 		break;
@@ -192,7 +247,7 @@ int main(int argc, char** argv) {
 	init();
 	// Keyboard listener
 	glutKeyboardFunc(keyboard);
-
+	glutSpecialFunc(specialKeys);
 	// Process Loop
 	glutMainLoop();
 	return 0;
