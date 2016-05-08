@@ -19,8 +19,8 @@ using namespace std;
 char title[] = "DISCO PARTY CAT PONG";
 // Window display size
 GLsizei winWidth = 800, winHeight = 600;
-// Time for animation
-GLfloat t = 0.0f;
+// Time delta for animation
+GLfloat dt = 0.1f;
 
 // Flag for pausing
 bool paws = true;
@@ -46,7 +46,7 @@ float computerPaddle = 0;
 float catX = 0;
 float catY = 0;
 float catVx = 0;
-float catVy = -1;
+float catVy = -5;
 
 /* Score */
 int playerScore = 0;
@@ -71,18 +71,52 @@ void drawCat(float x, float y) {
 	glPopMatrix();
 }
 
+void drawScore(int score, int x, int y) {
+	glRasterPos2i(x, y);
+	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, score + 48);
+}
+
 void drawGame() {
 	glColor3f(1.0, 1.0, 1.0);
+
 	drawPaddle(playerPaddle, BOARD_BOTTOM);
 	drawPaddle(computerPaddle, BOARD_TOP);
+
 	drawCat(catX, catY);
+
+	// 2D mode for drawing scores on board
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0.0, winWidth, 0.0, winHeight);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	drawScore(playerScore, 10, 10);
+	drawScore(computerScore, 10, winHeight - 20);
+
+	// Exit 2D mode
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 }
 
 void resetBoard() {
 	catX = 0;
 	catY = 0;
 	catVx = 0;
-	catVy = -1;
+	catVy = -5;
+}
+
+void checkHit(float minX, float maxX, float minY, float maxY, float resetY,
+              float x, float y, float &vx, float &vy) {
+	if (y > minY && y < maxY && x > minX && x < maxX) {
+		y = resetY;
+		vy = -vy;
+		// TODO: change vx
+	}
 }
 
 void checkBounds(float &x, float &vx) {
@@ -135,18 +169,23 @@ void transform(void)
 		return;
 
 	start = now;
-	t += 0.1;
 
 	// Draw paddles
 	drawPaddle(playerPaddle, BOARD_BOTTOM);
 	drawPaddle(computerPaddle, BOARD_TOP);
 
 	// Move and draw cat
-	catX += catVx * t;
-	catY += catVy * t;
+	catX += catVx * dt;
+	catY += catVy * dt;
 	drawCat(catX, catY);
 
 	// Check collision with paddle
+	checkHit(playerPaddle - PADDLE_WIDTH/2, playerPaddle + PADDLE_WIDTH/2,
+		 BOARD_BOTTOM, BOARD_BOTTOM + PADDLE_HEIGHT, BOARD_BOTTOM + PADDLE_HEIGHT,
+                 catX, catY, catVx, catVy);
+	checkHit(computerPaddle - PADDLE_WIDTH/2, computerPaddle + PADDLE_WIDTH/2,
+		 BOARD_TOP - PADDLE_HEIGHT, BOARD_TOP, BOARD_TOP - PADDLE_HEIGHT,
+                 catX, catY, catVx, catVy);
 
 	// Check bounds
 	checkBounds(catX, catVx);
