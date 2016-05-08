@@ -161,6 +161,8 @@ void drawGame() {
 	drawScore(playerScore, 10, 10);
 	drawScore(computerScore, 10, winHeight - 20);
 
+	// TODO: also write some instructions at the top
+
 	// Exit 2D mode
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -184,9 +186,14 @@ void resetBoard() {
 
 void checkHit(float minX, float maxX, float minY, float maxY, float resetY,
               float x, float y, float &vx, float &vy) {
+	// Check if cat has hit paddle
 	if (y > minY && y < maxY && x > minX && x < maxX) {
+		// Move cat clear of paddle
 		y = resetY;
+		// Bounce cat off paddle
 		vy = -vy;
+		// If cat hit edge of paddle, impart a little extra X-velocity
+		// This is only an approximation to realistic pong physics
 		vx += 0.2 * abs(x - (minX + maxX)/2) / PADDLE_WIDTH * vx;
 	}
 }
@@ -237,6 +244,8 @@ void init() {
 	glDepthFunc(GL_LEQUAL);
 	// Provide smooth shading
 	glShadeModel(GL_SMOOTH);
+
+	// TODO: disco lighting!
 
 	// Draw game board
 	resetBoard();
