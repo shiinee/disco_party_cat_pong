@@ -212,17 +212,17 @@ void checkBounds(float &x, float &vx) {
 }
 
 void checkGoal(float &y) {
-	// Computer scored
-	if (y < BOARD_BOTTOM) {
+	if (y < BOARD_BOTTOM)
+		// Computer scored
 		computerScore++;
-		resetBoard();
-	}
-	// Player scored
-	if (y > BOARD_TOP) {
+	else if (y > BOARD_TOP)
+		// Player scored
 		playerScore++;
-		resetBoard();
-	}
-	// TODO: freeze screen briefly and indicate point scored before resetting
+	else
+		return;
+
+	nanosleep((const struct timespec[]){{0, 250000000L}}, NULL);
+	resetBoard();
 }
 
 void computerMove(float &paddlePos, float catX) {
